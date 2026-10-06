@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VGD Class Arcade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#6fcaf0;--sky2:#bfe9fb;--block:#ffcc33;--block-edge:#c98a00;--ink:#2b1a0e;--brick:#d9432f;--grass:#46b04a;--dirt:#b8743c;--paper:#fff;--text:#20160c;--focus:#1b3fd1}
+@media (prefers-color-scheme:dark){:root{--sky:#1b2556;--sky2:#2c3a7a;--paper:#1f2748;--text:#fff;--focus:#ffd84d}}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100vh;font:400 1.15rem/1.45 Nunito,"Segoe UI",system-ui,sans-serif;color:var(--text);background:linear-gradient(var(--sky2),var(--sky) 320px) fixed,var(--sky)}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 120px}
+h1{font:400 clamp(2.4rem,7vw,4.6rem)/1 Bungee,Impact,"Arial Black",sans-serif;margin:0;color:var(--block);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;text-shadow:0 6px 0 var(--ink)}
+.sub{margin:14px 0 0;font-weight:800;font-size:1.25rem}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:26px 0 0;padding:0;list-style:none;counter-reset:s}
+.how li{counter-increment:s;background:var(--paper);border:3px solid var(--ink);border-radius:12px;padding:14px 16px 14px 62px;position:relative;font-weight:700}
+.how li::before{content:counter(s);position:absolute;left:14px;top:12px;width:36px;height:36px;border-radius:50%;background:var(--brick);color:#fff;font:400 1.2rem/36px Bungee,sans-serif;text-align:center;border:3px solid var(--ink)}
+.note{margin:12px 0 0;font-weight:700;opacity:.85}
+h2{font:400 1.6rem Bungee,Impact,sans-serif;color:#fff;-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;text-shadow:0 3px 0 var(--ink);margin:34px 0 14px}
+/* featured demo */
+.feature{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;background:var(--paper);border:4px solid var(--ink);border-radius:16px;padding:20px;box-shadow:0 6px 0 var(--ink)}
+@media (max-width:760px){.feature{grid-template-columns:1fr}}
+.tag{display:inline-block;font:800 .9rem Nunito,sans-serif;background:var(--grass);color:#fff;border:3px solid var(--ink);border-radius:999px;padding:2px 12px;margin-bottom:8px}
+.feature h3{font:400 clamp(1.5rem,3.5vw,2rem)/1.1 Bungee,Impact,sans-serif;margin:0 0 10px}
+.feature p{margin:0 0 12px}
+.feature .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px;padding:0;list-style:none}
+.feature .meta li{font-weight:800;font-size:.95rem;border:3px solid var(--ink);border-radius:8px;padding:2px 10px;background:#fff6d6;color:#20160c}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.controls{background:#fff6d6;color:#20160c;border:3px solid var(--ink);border-radius:12px;padding:14px 16px}
+.controls h4{font:400 1.1rem Bungee,Impact,sans-serif;margin:0 0 8px}
+.controls dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0;font-weight:700}
+.controls dt{font:800 .95rem ui-monospace,Menlo,monospace;background:#fff;border:2px solid var(--ink);border-radius:6px;padding:0 8px;text-align:center;align-self:start}
+.controls dd{margin:0}
+.controls .hint{margin:12px 0 0;font-size:1rem}
+/* student grid */
+.find{display:block;width:100%;max-width:520px;margin:6px 0 12px;font:800 1.25rem Nunito,sans-serif;padding:14px 18px;border:4px solid var(--ink);border-radius:12px;background:var(--paper);color:var(--text)}
+.bar{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font:800 1rem Nunito,sans-serif;padding:8px 14px;border-radius:999px;border:3px solid var(--ink);background:var(--paper);color:var(--text);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brick);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px}
+.lvl{text-decoration:none;text-align:left;cursor:pointer;border:4px solid var(--ink);border-radius:12px;background:var(--block);color:#20160c;padding:16px;min-height:120px;font-family:inherit;box-shadow:inset 0 -6px 0 var(--block-edge),0 6px 0 var(--ink);transition:transform .08s,box-shadow .08s;display:flex;flex-direction:column;gap:6px}
+.lvl:hover{transform:translateY(-2px);box-shadow:inset 0 -6px 0 var(--block-edge),0 8px 0 var(--ink)}
+.lvl:active{transform:translateY(5px);box-shadow:inset 0 -6px 0 var(--block-edge),0 1px 0 var(--ink)}
+.lvl .nm{font:400 1.4rem/1.1 Bungee,Impact,sans-serif}
+.lvl .tt{font-weight:700;font-size:1rem;opacity:.85}
+.lvl .go{margin-top:auto;align-self:flex-start;font-weight:800;font-size:1rem;background:var(--brick);color:#fff;border:3px solid var(--ink);border-radius:8px;padding:3px 12px}
+.lvl.done{background:var(--grass);color:#fff;box-shadow:inset 0 -6px 0 #2e7d32,0 6px 0 var(--ink)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(--focus);outline-offset:3px}
+.empty{background:var(--paper);border:4px dashed var(--ink);border-radius:14px;padding:24px;font-weight:700;max-width:620px}
+.updated{margin-top:40px;font-weight:700;opacity:.8}
+.ground{position:fixed;left:0;right:0;bottom:0;height:34px;border-top:4px solid var(--ink);background:linear-gradient(var(--grass) 0 10px,transparent 10px),repeating-conic-gradient(var(--dirt) 0 25%,#a0622e 0 50%) 0 10px/24px 24px}
+.modal{position:fixed;inset:0;background:rgba(20,12,4,.65);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+.modal.open{display:flex}
+.box{background:#fff;color:#20160c;border:4px solid var(--ink);border-radius:16px;padding:24px;max-width:540px;width:100%;max-height:92vh;overflow:auto}
+.box h3{font:400 1.5rem/1.15 Bungee,Impact,sans-serif;margin:0 0 12px}
+.box p{margin:0 0 14px;font-size:1.15rem}
+.box .steps{background:#fff6d6;border:3px solid var(--ink);border-radius:10px;padding:12px 14px 12px 40px;font-weight:700;margin:0 0 14px}
+.box .steps li{margin:4px 0}
+.box textarea{width:100%;height:130px;font:600 .85rem ui-monospace,Menlo,monospace;border:3px solid var(--ink);border-radius:8px;padding:8px;margin-bottom:14px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end}
+.btn{font:800 1.15rem Nunito,sans-serif;padding:12px 20px;border:3px solid var(--ink);border-radius:12px;background:#fff;color:#20160c;cursor:pointer;text-decoration:none;box-shadow:0 4px 0 var(--ink);display:inline-block}
+.btn.big{background:var(--brick);color:#fff}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="ground" aria-hidden="true"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mh">
+  <div class="box" id="box"></div>
+</div>
+<script>
+/* ===== SETTINGS: edit these ===== */
+// Optional: student levels. Leave the file out until you have one; the demo still works.
+const API_URL = 'levels.json';
+// Where "Open the game" goes
+const GAME_URL = 'https://levelsharesquare.com/games/supermarioconstruct';
+// What players do in the game tab, one click per line
+const PASTE_STEPS = [
+  'Click Play on the Level Share Square page.',
+  'Click Play Level.',
+  'Press Ctrl+V to paste the code (Cmd+V on a Mac). Have fun!'
+];
+// The featured demo level. To swap in a new version, replace everything between the backticks.
+const DEMO = {
+  name: "...And Then? The Keys to the Kingdom",
+  by: 'Built by Sam for the VRMS Video Game Design class',
+  blurb: "The credits rolled... AND THEN? Bowser's Koopas locked every door in the Mushroom Kingdom and hid the keys. Find them, get past the guards, and rescue Peach. But is that really Peach?",
+  facts: ['Puzzler track', '7 areas', 'Kishotenketsu story', '2 boss fights'],
+  file: 'Keys_to_the_Kingdom.txt',
+  code: `{"ver":"v8.beta37","style":2,"name":"...And Then? The Keys to the Kingdom","authors":"Sam and VRMS VGD","start":{"map":"Bowser's Tower","p1":{"X":1,"Y":17}},"maps":{"Bowser's Tower":{"size":"30,22","layers":{"Objects":{"dat":"o,,0,0","objects":{"0":"o46,3,17,E[26,15,,,,1],T[MARIO! The credits just ended and Bowser is ALREADY back! He is up on that tower. Do not get too close!][Mario, look up there!]","1":"o75,5,17,E[26,15,,,,1,!],T[BOWSER: GWAHAHA! My Koopas locked EVERY door in the Kingdom and hid the keys! And good luck finding PEACH! You will never see me again... probably.][Read me]","2":"bs2,20,9,E[7,.k,3,,,,48,400,1,2,50,,1,2,2]","3":"pi1,7,17,E[2]"}},"Tiles 1":{"dat":"t,,0,0","tilemaps":{"2_Grass":"345x-1,0,14x1,15x-1,3,14x4,15x-1,3,14x4,15x-1,3,14x4,15x-1,3,14x4,15x-1,3,14x4,15x-1,3,14x4,9x1,2,5x-1,3,23x4,5,5x-1,3,23x4,5,5x-1,3,23x4,5,5x-1,3,14x4","2_Lava":"580x-1,5x1,25x-1,5x0,25x-1,5x0,15x-1","2_Blocks":"9x-1,40,5x-1,40,23x-1,40,5x-1,40,23x-1,40,5x-1,40,23x-1,40,5x-1,40,23x-1,40,5x-1,40,23x-1,40,5x-1,40,23x-1,40,5x-1,40,23x-1,40,5x-1,40,23x-1,40,5x-1,40,23x-1,40,5x-1,40,-1,0,21x-1,40,5x-1,40,-1,0,21x-1,40,29x-1,40,29x-1,40,29x-1,40,29x-1,40,200x-1"}},"Tiles 2":{"dat":"t,,0,0"}},"editL":"Objects","pal":0,"bgc":"0063bd","music":4,"bg":"2_cloud1,1,6","mg":"2_cloud,1,6","fg":"2_hill2,1,6","entryways":{"Down the Pipe":"1,Objects,7.5,16.5,Town Arrival,Toad Town"}},"Toad Town":{"size":"44,22","layers":{"Objects":{"dat":"o,,0,0","objects":{"0":"o75,3,17,E[26,15,,,,1,!],T[...AND THEN? You heard Bowser. His Koopas LOCKED every door in the Mushroom Kingdom and hid the keys. Time to get them back, one door at a time!][The story so far]","1":"o46,8,17,E[26,15,,,,1],T[Mario! I am Toad the Locksmith. Here is a key! Hold the RUN button to carry it. Walk it to the door and press UP to unlock it. Easy, right?][Mario! Over here!],C[o28]","2":"o75,13,17,E[26,15,,,,1,!],T[HOW TO: Hold RUN to carry the key. Press UP at a door to open it.][Tip]","3":"o1,17,14","4":"o1,18,14","5":"o1,19,14","6":"o1,20,14","7":"o1,25,16","8":"o1,27,16","9":"o1,29,16","10":"o1,31,16","11":"o1,33,16","12":"o1,35,16","13":"o46,30,17,2,E[26,15,,,,1],T[Lost your key? I always keep a spare.][Need a spare?],C[o28]","14":"pi1,1,17,E[2]"}},"Tiles 1":{"dat":"t,,0,0","tilemaps":{"2_Grass":"720x-1,0,4x1,2,38x-1,3,4x4,5,22x-1,16x1,6x4,22x1,132x4","2_Blocks":"43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,43x-1,40,176x-1"}},"Tiles 2":{"dat":"t,,0,0"}},"editL":"Objects","pal":0,"bgc":"0063bd","music":1,"bg":"2_cloud1,1,6","mg":"2_cloud,1,6","fg":"2_hill2,1,6","destinations":{"Town Arrival":"2,Objects,1.5,16.5"},"entryways":{"Castle Gate":"5,Objects,39.5,17,Gate Arrival,Key Hill,,2"}},"Key Hill":{"size":"120,22","layers":{"Objects":{"dat":"o,,0,0","objects":{"0":"o75,3,17,E[26,15,,,,1,!],T[KEY HILL: The key is hidden in a ? Block. Find it, then carry it to the top!][Read me]","1":"o1,12,13","2":"o1,13,13","3":"o1,14,13","4":"b2,13,14,C[o28]","5":"b2,20,14,C[i1]","6":"e1,26,17","7":"e1,34,17","8":"e1,45,15","9":"e1,56,13","10":"e1,67,11","11":"e1,78,11","12":"o31,36,17,E[6,,4,,1,,5]","13":"o46,38,17,3,E[26,15,,,,1],T[Checkpoint, huh? If you lost the key, take this one. Do NOT drop it!][Spare key!],C[o28]","14":"o1,42,14","15":"o1,44,14","16":"o1,46,14","17":"o1,48,14","18":"o1,53,12","19":"o1,55,12","20":"o1,57,12","21":"o1,59,12","22":"o1,64,10","23":"o1,66,10","24":"o1,68,10","25":"o1,70,10","26":"o1,88,16","27":"o1,91,16","28":"o1,94,16","29":"o1,97,16","30":"o1,100,16","31":"o1,103,16"}},"Tiles 1":{"dat":"t,,0,0","tilemaps":{"2_Grass":"1502x-1,0,19x1,2,99x-1,3,19x4,5,88x-1,0,10x1,20x4,5,88x-1,3,30x4,5,77x-1,0,10x1,31x4,5,77x-1,3,41x4,5,37x-1,40x1,43x4,37x1,360x4","2_Blocks":"119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,119x-1,40,480x-1"}},"Tiles 2":{"dat":"t,,0,0"}},"editL":"Objects","pal":0,"bgc":"0063bd","music":1,"mg":"2_hillB,1,6","fg":"2_hillF,1,6","destinations":{"Gate Arrival":"0,Objects,2,17"},"entryways":{"Throne Door":"5,Objects,112.5,17,Path Arrival,Kingdom Path,,2"}},"Kingdom Path":{"size":"130,22","layers":{"Objects":{"dat":"o,,0,0","objects":{"0":"o46,5,17,2,E[26,15,,,,1],T[No key needed here, just good jumping! But somebody big is guarding the castle gate at the end of this path.][Psst, Mario!]","1":"e1,16,17","2":"e1,30,17","3":"e1,50,17","4":"e1,70,17","5":"e1,92,17","6":"e1,104,17","7":"o1,40,13","8":"o1,41,13","9":"o1,42,13","10":"o1,43,13","11":"o1,80,13","12":"o1,81,13","13":"o1,82,13","14":"o1,83,13","15":"o1,57,13","16":"o1,58,13","17":"o1,59,13","18":"o1,60,13","19":"o1,61,13","20":"o1,62,13","21":"o31,66,17,E[6,,4,,1,,5]","22":"b2,24,14,C[i1]","23":"pi1,124,17,E[2]"}},"Tiles 1":{"dat":"t,,0,0","tilemaps":{"2_Grass":"2006x-1,0,6x1,2,122x-1,3,6x4,5,122x-1,3,6x4,5,66x-1,39x1,2,4x-1,0,11x1,8x4,15x1,2,4x-1,0,45x1,39x4,5,4x-1,3,34x4,5,4x-1,3,84x4,5,4x-1,3,34x4,5,4x-1,3,84x4,5,4x-1,3,34x4,5,4x-1,3,45x4"}},"Tiles 2":{"dat":"t,,0,0"}},"editL":"Objects","pal":0,"bgc":"0063bd","music":1,"bg":"2_cloud1,1,6","mg":"2_cloud,1,6","fg":"2_hill2,1,6","destinations":{"Path Arrival":"0,Objects,2,17"},"entryways":{"Castle Pipe":"1,Objects,124.5,16.5,Gate Arrival 2,Castle Gate"}},"Castle Gate":{"size":"50,22","layers":{"Objects":{"dat":"o,,0,0","objects":{"0":"pi1,1,17,E[2]","1":"o46,6,17,3,E[26,15,,,,1],T[BOOM BOOM has the castle key! Stomp him 3 times and grab the key he drops.][Watch out!]","2":"bs1,28,17,E[7,.k,1,,2,100,512,512,2,512],C[o28]"}},"Tiles 1":{"dat":"t,,0,0","tilemaps":{"2_Castle":"100x4,50x7,750x-1,50x1,150x4","2_Blocks":"49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,49x-1,40,200x-1"}},"Tiles 2":{"dat":"t,,0,0"}},"editL":"Objects","pal":0,"bgc":"000000","music":4,"mg":"2_castle,3,6","destinations":{"Gate Arrival 2":"2,Objects,1.5,16.5"},"entryways":{"Throne Door":"5,Objects,46.5,17,Throne Arrival,Throne Room,,2"}},"Throne Room":{"size":"56,22","layers":{"Objects":{"dat":"o,,0,0","objects":{"0":"o46,5,17,2,E[26,15,,,,1],T[Mario, you made it! Princess Peach escaped and she has the LAST key! She is right over there. Go say hi!][Look who it is!]","1":"bs2,30,16,E[7,.k,3,3,,,48,400,1,2,50,,1,2,2],C[o28]","2":"o75,50,17,E[26,15,,,,1,!],T[Only the person holding the LAST key can open this door.][Locked]"}},"Tiles 1":{"dat":"t,,0,0","tilemaps":{"2_Castle":"168x4,56x7,784x-1,56x1,168x4","2_Blocks":"55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,55x-1,40,224x-1"}},"Tiles 2":{"dat":"t,,0,0"}},"editL":"Objects","pal":0,"bgc":"000000","music":4,"mg":"2_castle,3,6","destinations":{"Throne Arrival":"0,Objects,2,17"},"entryways":{"Last Door":"5,Objects,52.5,17,Home Arrival,Back Home,,2"}},"Back Home":{"size":"34,22","layers":{"Objects":{"dat":"o,,0,0","objects":{"0":"o46,6,17,2,E[26,15,,,,1],T[Every door is open again! Wait... where is the REAL Peach?][Mario!]","1":"o46,10,17,3,E[26,15,,,,1],T[Oh! She left a note: 'Gone on vacation. Thanks for the keys! Love, Peach.'][A note!]","2":"o46,14,17,E[26,15,,,,1],T[Bowser said he will be back... in the SEQUEL. Want to build it?][Psst...]","3":"o1,18,15","4":"o1,19,15","5":"o1,20,15","6":"o1,21,15","7":"o1,22,15","8":"o1,23,15","9":"o1,24,15","10":"o15,27,17,E[15,1,14,,1]"}},"Tiles 1":{"dat":"t,,0,0","tilemaps":{"2_Grass":"612x-1,34x1,102x4"}},"Tiles 2":{"dat":"t,,0,0"}},"editL":"Objects","pal":0,"bgc":"0063bd","music":1,"bg":"2_cloud1,1,6","mg":"2_cloud,1,6","fg":"2_hill2,1,6","destinations":{"Home Arrival":"0,Objects,2,17"}}},"lives":5,"timer":900}`
+};
+// Students whose game lives somewhere else (like Bloxels). Clicking opens the link directly.
+// Example: { name: 'Kaylena S.', period: '1st', title: '', url: 'https://...' }
+const LINK_LEVELS = [];
+/* ================================= */
+
+let DATA = { updated: null, levels: [] };
+let status = 'loading';
+const ORDER = ['1st','2nd','3rd','4th','5th','6th','7th'];
+let levels = [], periods = [];
+function setData(d){
+  DATA = d || { updated:null, levels:[] };
+  const isUrl = s => /^https?:\/\/\S+$/i.test(String(s||'').trim());
+  const links = LINK_LEVELS.filter(l=>isUrl(l.url));
+  const fed = (DATA.levels||[]).map(l=>isUrl(l.code)?Object.assign({},l,{url:l.code.trim()}):l);
+  levels = fed.concat(links).map((l,i)=>Object.assign({i},l));
+  periods = [...new Set(levels.map(l=>l.period))]
+    .sort((a,b)=>(ORDER.indexOf(a)+1||99)-(ORDER.indexOf(b)+1||99));
+}
+let period='All', query='';
+const played=new Set();
+let demoPlayed=false;
+
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const firstName=n=>String(n).split(' ')[0];
+const stepsHTML=()=>PASTE_STEPS.length?`<p style="margin-bottom:6px"><b>In the game tab:</b></p><ol class="steps">${PASTE_STEPS.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:'';
+
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); return true; }catch(e){}
+  try{
+    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); const ok=document.execCommand('copy'); ta.remove(); return ok;
+  }catch(e){ return false; }
+}
+function download(name,text){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));
+  a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500);
+}
+
+function block(l){
+  if(l.url){
+    const label = /bloxels/i.test(l.url) ? 'Play in Bloxels' : 'Open game';
+    return `<a class="lvl ${played.has(l.i)?'done':''}" href="${esc(l.url)}" target="_blank" rel="noopener" data-link="${l.i}">
+      <span class="nm">${esc(l.name)}</span>${l.title?`<span class="tt">${esc(l.title)}</span>`:''}
+      <span class="go">${label}</span></a>`;
+  }
+  return `<button class="lvl ${played.has(l.i)?'done':''}" data-i="${l.i}">
+    <span class="nm">${esc(l.name)}</span>${l.title?`<span class="tt">${esc(l.title)}</span>`:''}
+    <span class="go">${played.has(l.i)?'Play again':'Play'}</span></button>`;
+}
+
+function featureHTML(){
+  return `<h2>Featured level</h2>
+  <section class="feature" aria-labelledby="fh">
+    <div>
+      <span class="tag">Teacher demo</span>
+      <h3 id="fh">${esc(DEMO.name)}</h3>
+      <p>${esc(DEMO.blurb)}</p>
+      <ul class="meta">${DEMO.facts.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
+      <div class="btns">
+        <button class="btn big" data-demo="play">${demoPlayed?'Play again':'Play the demo'}</button>
+        <button class="btn" data-demo="file">Download level file</button>
+      </div>
+      <p class="note">${esc(DEMO.by)}</p>
+    </div>
+    <div class="controls">
+      <h4>Key tips</h4>
+      <dl>
+        <dt>RUN</dt><dd>Hold it to pick up and carry a key.</dd>
+        <dt>UP</dt><dd>Press it at a door to unlock it. Also talks to Toads.</dd>
+        <dt>JUMP</dt><dd>Stomp bosses 3 times. Watch out for fire!</dd>
+      </dl>
+      <p class="hint"><b>Lost your key?</b> Look for a Toad with a spare.</p>
+    </div>
+  </section>`;
+}
+
+function studentsHTML(){
+  if(status==='loading') return '<p class="empty">Loading student levels...</p>';
+  if(status==='error' || !levels.length) return '<p class="empty">Student levels are coming soon. Play the demo above while you wait!</p>';
+  const q=query.trim().toLowerCase();
+  const match=l=>!q||(l.name+' '+(l.title||'')).toLowerCase().includes(q);
+  const groups=(period==='All'?periods:[period]).map(p=>{
+    const list=levels.filter(l=>l.period===p&&match(l)).sort((a,b)=>a.name.localeCompare(b.name));
+    return list.length?`<section><h2>${esc(p)} period</h2><div class="grid">${list.map(block).join('')}</div></section>`:'';
+  }).join('');
+  return `<input class="find" type="search" placeholder="Type a student's first name" aria-label="Type a student's first name" value="${esc(query)}">
+    ${periods.length>1?`<div class="bar" role="toolbar" aria-label="Show one class period">
+      ${['All',...periods].map(p=>`<button class="chip" data-p="${esc(p)}" aria-pressed="${p===period}">${p==='All'?'All classes':esc(p)+' period'}</button>`).join('')}
+    </div>`:''}
+    ${groups||'<p class="empty" style="margin-top:20px">No one by that name yet. Check the spelling, or try just the first few letters.</p>'}`;
+}
+
+function render(){
+  const upd=DATA.updated?new Date(DATA.updated).toLocaleString([],{dateStyle:'medium',timeStyle:'short'}):null;
+  document.getElementById('app').innerHTML=`<div class="wrap">
+    <h1>Class Arcade</h1>
+    <p class="sub">Super Mario Construct levels made by View Ridge Video Game Design students.</p>
+    <ol class="how">
+      <li>Pick a level and click Play.</li>
+      <li>The level code copies for you.</li>
+      <li>Open the game, then paste the code. That's it!</li>
+    </ol>
+    <p class="note">Works best on a laptop or desktop computer with a keyboard.</p>
+    ${featureHTML()}
+    <h2>Student levels</h2>
+    ${studentsHTML()}
+    ${upd?`<p class="updated">Last updated ${esc(upd)}.</p>`:''}
+  </div>`;
+}
+
+function openModal(html){
+  document.getElementById('box').innerHTML=html;
+  document.getElementById('modal').classList.add('open');
+  (document.querySelector('#box [data-focus]')||document.querySelector('#box button')).focus();
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+async function play(l){
+  const ok=await copyText(l.code);
+  const who=l.isDemo?'The demo':esc(firstName(l.name))+"'s";
+  const openBtn=GAME_URL?`<a class="btn big" href="${esc(GAME_URL)}" target="_blank" rel="noopener" data-focus data-act="opened">Open the game</a>`:'';
+  if(ok){
+    openModal(`<h3 id="mh">${who} level is copied!</h3>
+      <p>${GAME_URL?'Click <b>Open the game</b> below. It opens in a new tab.':'Open Super Mario Construct.'}</p>
+      ${stepsHTML()}
+      <p>To play another level, come back to this tab.</p>
+      <div class="actions"><button class="btn" data-act="close">Close</button>${openBtn}</div>`);
+  }else{
+    openModal(`<h3 id="mh">One extra step</h3>
+      <p>This computer didn't let us copy automatically. The code below is already selected. Press <b>Ctrl+C</b> (on a Mac, <b>Cmd+C</b>) to copy it.</p>
+      <textarea readonly>${esc(l.code)}</textarea>
+      ${stepsHTML()}
+      <div class="actions"><button class="btn" data-act="close">Close</button>${openBtn}</div>`);
+    const ta=document.querySelector('#box textarea'); ta.focus(); ta.select();
+  }
+}
+
+document.addEventListener('click',e=>{
+  const link=e.target.closest('a[data-link]');
+  if(link){ played.add(+link.dataset.link); setTimeout(render,100); return; }
+  const act=e.target.closest('[data-act]');
+  if(act){ if(act.dataset.act==='close'||act.dataset.act==='opened') setTimeout(closeModal,50); return; }
+  if(e.target.id==='modal'){ closeModal(); return; }
+  const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.demo==='play'){ demoPlayed=true; render(); play({code:DEMO.code,isDemo:true}); return; }
+  if(b.dataset.demo==='file'){ download(DEMO.file,DEMO.code); return; }
+  if(b.dataset.p){ period=b.dataset.p; render(); return; }
+  if(b.dataset.i!==undefined){ const l=levels[+b.dataset.i]; played.add(l.i); render(); play(l); }
+});
+document.addEventListener('input',e=>{
+  if(!e.target.classList.contains('find')) return;
+  query=e.target.value; const pos=e.target.selectionStart; render();
+  const s=document.querySelector('.find'); s.focus(); s.setSelectionRange(pos,pos);
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+render();
+fetch(API_URL + '?t=' + Date.now(), { cache: 'no-store' })
+  .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+  .then(d=>{ setData(d); status='ready'; render(); })
+  .catch(()=>{ setData(null); status='error'; render(); });
+</script>
+</body>
+</html>
